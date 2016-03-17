@@ -1,5 +1,4 @@
-# orloj
-Server for ETA site
+# snowsm
 
 ## Local Setup
 
