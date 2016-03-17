@@ -1,0 +1,11 @@
+{
+  "name": "Orloj",
+  "description": "ETA Tracker",
+  "version": "0.0.0",
+  "scripts": {
+    "postinstall": "bower install"
+  },
+  "dependencies": {
+    "bower": "^1.6.3"
+  }
+}

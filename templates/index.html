@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+
+<html ng-app="etaDashboard">
+  <head>
+      <title>Orloj - Easy Group ETAs</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+      <!-- Latest compiled and minified CSS -->
+       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-animate.min.js"></script>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+      <!-- Latest compiled and minified JavaScript -->
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.min.js"></script>
+      <script src="/static/js/utils.js"></script>
+      <script src="/static/js/controllers.js"></script>
+      <script src="/static/components/add-to-homescreen/src/addtohomescreen.js"></script>
+      <script type='text/javascript' src="//wurfl.io/wurfl.js"></script>
+
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+      <link rel="stylesheet" type="text/css" href="/static/components/add-to-homescreen/style/addtohomescreen.css">
+
+
+    <style>
+
+        .nav, .pagination, .carousel, .panel-title a {
+            cursor: pointer;
+        }
+
+        body {
+            padding-bottom: 70px;
+        }
+
+      .startedby {
+          position: absolute;
+          text-align: right;
+          vertical-align: bottom;
+          bottom: 4px;
+          right: 10px;
+          max-width: 250px;
+      }
+
+      .logo {
+          font: 'Concert One';
+          font-kerning: auto;
+          font-size: 30px;
+          font-stretch: normal;
+          font-variant: normal;
+          font-variant-ligatures: normal;
+          font-weight: bold;
+          color: #0000CC;
+          margin-left: 10px;
+      }
+
+      .orloj-tabs {
+          margin-top: 53px;
+      }
+
+        .ath-container {
+            border-radius: 10px;
+        }
+
+      #pac-input {
+        background-color: #fff;
+        font-family: Roboto;
+          font-size: 18px;
+        font-weight: 300;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+          display: block;
+          max-width: 400px;
+          margin: auto;
+          margin-top: 20px;
+          text-align: center;
+
+      }
+
+      .pac-item {
+          padding-top: 7px;
+          vertical-align: middle;
+          font-size: 18px;
+          height: 45px;
+      }
+
+      .pac-matched {
+          font-size: 18px;
+      }
+
+      .pac-item-query {
+          font-size: 18px;
+          padding-right: 5px;
+      }
+
+      #pac-input:focus {
+        border-color: #4d90fe;
+      }
+
+      #map-canvas {
+          width: 100%;
+          height: 300px;
+          margin-top: 20px;
+
+      }
+
+      .orloj-tile {
+          margin-left: auto;
+          margin-right: auto;
+          margin-top: 30px;
+
+          text-align: center;
+      }
+
+      @media screen and (min-width: 992px) {
+          .tab-content .no-fade-desktop {
+              opacity: 1;
+              display: block;
+          }
+
+          .dashboard-desktop {
+              top: 300px;
+              position: absolute;
+              max-width: 600px;
+          }
+
+          .mode-selector {
+              margin-left: 50%
+          }
+      }
+
+      @media screen and (max-width: 991px) {
+          .tab-content .no-fade-desktop {
+              padding-bottom: 30px;
+
+          }
+      }
+
+      @media screen and (max-width: 525px) {
+          #list-of-session-users {
+              position: absolute;
+              left: 0;
+              margin: 0;
+              margin-top: 20px;
+              width: 100%;
+              text-align: left;
+
+          }
+
+          #timing-dashboard {
+              position: static;
+          }
+      }
+
+      .user-selector {
+          vertical-align: middle;
+      }
+
+      .session-list-name {
+
+          font-size: 20px;
+          font-weight: 500;
+          font: 'Concert One';
+          text-decoration: none;
+      }
+
+      .session-list-time {
+          float: right;
+          font: 'Concert One';
+          font-size: 18px;
+          font-weight: 400;
+          display: inline-block;
+
+      }
+
+      #timing-dashboard {
+
+      }
+
+      @media screen and (min-width: 526px) {
+
+          #list-of-session-users {
+
+              margin: auto;
+              margin-top: 20px;
+              max-width: 350px;
+              text-align: left;
+
+          }
+      }
+
+      .pac-container {
+        font-family: Roboto;
+      }
+
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyBhrGYLquM8Z1ENwYMbQLVueqVmjFUTs1c"></script>
+
+    <script>
+        var shareBubble = addToHomescreen({
+            'autostart': false,
+            'maxDisplayCount': 2,
+            'modal': false,
+            'message': "Use the browser's share button %icon to invite others!",
+            'displayPace': 60,
+            'lifespan': 11,
+            'icon': true,
+            'closestEdge': true
+        });
+        var currentUserId = {{current_user.id if current_user.is_authenticated() else 'null'}};
+        var autocomplete;
+        var shareUrl;
+        var infoWindow;
+        var map;
+        var marker;
+        var sessionId = null;
+        var sessionOwnerName = null;
+        var ugsId = null; // Id for this individual user for this session.
+        var ugsStatus = 'IS_GOING';
+        var ugsTransitMode = null;
+        var ugsRefreshMode = 'MANUAL';
+        var shareCode = '{{ request.args['r'] if 'r' in request.args else '' }}';
+        shareCode = window.location.hash ? window.location.hash.substring(1) : shareCode;
+        var current_lat = 42.409035;
+        var current_long = -71.138144;
+        var nextAfterName = null;
+        var destinationSet = false;
+        var userMode = 'UNKNOWN'; // Can be viewer, requester, sharer
+
+        {% raw %}
+
+        function setMapFromPlaceObject(place) {
+
+                if (!place.geometry) {
+      window.alert("Autocomplete's returned place contains no geometry");
+      return;
+    }
+
+    // If the place has a geometry, then present it on a map.
+    if (place.geometry.viewport) {
+      map.fitBounds(place.geometry.viewport);
+    } else {
+      map.setCenter(place.geometry.location);
+      map.setZoom(17);  // Why 17? Because it looks good.
+    }
+    marker.setIcon(/** @type {google.maps.Icon} */({
+      url: place.icon,
+      size: new google.maps.Size(71, 71),
+      origin: new google.maps.Point(0, 0),
+      anchor: new google.maps.Point(17, 34),
+      scaledSize: new google.maps.Size(35, 35)
+    }));
+    marker.setPosition(place.geometry.location);
+    marker.setVisible(true);
+
+    var address = '';
+    if (place.address_components) {
+      address = [
+        (place.address_components[0] && place.address_components[0].short_name || ''),
+        (place.address_components[1] && place.address_components[1].short_name || ''),
+        (place.address_components[2] && place.address_components[2].short_name || '')
+      ].join(' ');
+    }
+
+    infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
+    infowindow.open(map, marker);
+
+            }
+
+        function prepareMapAndTimeElements(id, cb) {
+            var request = {
+                placeId: id
+            };
+
+            var service = new google.maps.places.PlacesService(map);
+
+            service.getDetails(request, function (place, status) {
+
+        if (status == google.maps.places.PlacesServiceStatus.OK) {
+
+            setMapFromPlaceObject(place);
+            updateTimes(place);
+
+        }
+                else {
+            console.log('error communicating with Google Places service');
+        }
+                if (cb) {
+
+                    cb(place);
+                }
+    });
+
+
+        }
+
+        function initialize() {
+
+  var mapOptions = {
+    center: new google.maps.LatLng(42.355376, -71.104367),
+    zoom: 11,
+      streetViewControl: false,
+      mapTypeControl: false
+  };
+            if (WURFL.is_mobile) {
+                mapOptions['draggable'] = false;
+            }
+  map = new google.maps.Map(document.getElementById('map-canvas'),
+    mapOptions);
+
+  var input = /** @type {HTMLInputElement} */(
+      document.getElementById('pac-input'));
+
+  var types = document.getElementById('type-selector');
+//  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+  autocomplete = new google.maps.places.Autocomplete(input);
+  autocomplete.bindTo('bounds', map);
+
+  infowindow = new google.maps.InfoWindow();
+  marker = new google.maps.Marker({
+    map: map,
+    anchorPoint: new google.maps.Point(0, -29)
+  });
+
+
+
+  google.maps.event.addListener(autocomplete, 'place_changed', function() {
+    infowindow.close();
+    marker.setVisible(false);
+    var place = autocomplete.getPlace();
+      setMapFromPlaceObject(place);
+      $('#banner-headline').text('Orloj helps people meet up efficiently.');
+
+  });
+
+    google.maps.event.addListener(autocomplete, 'place_changed', function(){
+        onPlaceChanged();
+
+    });
+
+            //Handling for the case where we have a sessionId already
+            if (shareCode) {
+
+                //Get GroupSession object
+                $.get('/api/group_session?q=' + JSON.stringify({'filters': [{
+                'name': 'code',
+                'op': 'eq',
+                'val': shareCode}]}), function(respData){
+
+                    // If I am the owner, set requester mode.
+                    if (respData['objects'][0]['user_id'] == currentUserId) {
+                        userMode = 'REQUESTER';
+                    }
+
+                    //TODO: Restrict to active sessions
+                    showShareOptions(respData['objects'][0]);
+                    //autocomplete.setPlace(respData['objects'][0]['dest_place_id']);
+
+                    // Get Place from Id
+                    if (respData['objects'][0]['dest_place_id']) {
+                        $('#pac-input').hide();
+                        $('#use-your-location').hide();
+                        prepareMapAndTimeElements(respData['objects'][0]['dest_place_id']);
+                    }
+                    else {
+                        // Set the map using the geolocation API.
+                        positionMapNoLocationServices();
+                    }
+
+                    // Check to see if user has already departed.
+                    $.get('/api/user_group_session?q=' + JSON.stringify({'filters': [{
+                'name': 'groupsession_id',
+                'op': 'eq',
+                'val': respData['objects'][0]['id']},{
+                        'name': 'user_id',
+                        'op': 'eq',
+                        'val': currentUserId // Need my user id here.
+
+                    }]}), function(respData) {
+
+                        if (respData['num_results']) {
+
+                            userMode = 'SHARER';
+                            hideDashboard();
+
+                            ugsId = respData['objects'][0]['id'];
+                            ugsTransitMode = respData['objects'][0]['transit_mode'];
+                            ugsRefreshMode = respData['objects'][0]['eta_mode'];
+                            ugsStatus = respData['objects'][0]['status'];
+                            //Trigger an update here.
+                            updateLocation(refreshEta);
+                        }
+                    });
+
+                    // Show dashboard
+                    angular.element($('#timing-dashboard')).scope().etaUpdate();
+
+                });
+                //Set autocomplete box to prestored value
+                // After that completes:
+                    //showShareOptions(something)
+                    //updateTimes
+                    //trigger dashboard update
+            }
+
+            if (!shareCode) {
+                // Trigger initial location update
+                // Get location using geolocation API to avoid requesting GPS access early.
+                positionMapNoLocationServices();
+
+            }
+
+}
+
+        //google.maps.event.addDomListener(window, 'load', initialize);
+
+function updateTimes(place) {
+    // HACK: If we're setting this flag here, then we know where we're going.
+    destinationSet = true;
+    if (!place) {
+        place = autocomplete.getPlace();
+    }
+    if (!place.geometry) {
+      return;
+    }
+    var endpoints = {'dest':{},'orig':{}};
+    endpoints['dest']['lat'] = place.geometry.location.lat();
+    endpoints['dest']['long'] = place.geometry.location.lng();
+    endpoints['orig']['lat'] = current_lat;
+    endpoints['orig']['long'] = current_long;
+    $.ajax({
+        url: '/api/times',
+        type: 'POST',
+        data: JSON.stringify(endpoints),
+        contentType: "application/json; charset=utf-8",
+        dataType: 'json',
+        success: function(data){
+            //Show new time estimate, departure button
+            //Show share buttons
+
+            // Temporarily remove estimates. Don't want this functionality for now.
+            //$('#car-eta-string').text('Estimated driving time: ' + data['car_estimate'].toString() + ' minutes');
+            //$('#walking-eta-string').text('Estimated walking time: ' + data['walking_estimate'].toString() + ' minutes');
+            enableDashboard();
+
+        return;
+    }});
+
+}
+        //Init listeners
+        function initListeners() {
+            $('#invite-button').click(createSession);
+            $('#copy-url-button').click(function(){
+//                var clipboardEvent = new ClipboardEvent('copy', {dataType: 'text/plain',
+//                                           data    : shareUrl});
+//                document.dispatchEvent(clipboardEvent);
+                return;
+            });
+
+            $('#depart-car-button').click(function () {
+
+                $('#time-list').hide();
+
+                $('#depart-car-button').addClass('active');
+                $('#depart-walking-button').removeClass('active');
+                $('#manual-entry-button').removeClass('active');
+
+                // Check if we have a destination yet.
+//                if (!destinationSet) {
+//                    alert('Specify the meet-up point first!');
+//                    return;
+//                }
+
+                // Set transit mode
+                ugsTransitMode = 'CAR';
+                ugsRefreshMode = 'AUTO';
+                ugsStatus = 'IN_TRANSIT';
+                if(!sessionId) {
+                    createSession(function () {
+                        updateLocation(refreshEta)
+                    });
+                }
+                else {
+                    updateLocation(refreshEta);
+                }
+            });
+
+            $('#depart-walking-button').click(function () {
+                $('#time-list').hide();
+
+                $('#depart-car-button').removeClass('active');
+                $('#depart-walking-button').addClass('active');
+                $('#manual-entry-button').removeClass('active');
+                // Check if we have a destination yet.
+
+                // Set transit mode
+                ugsTransitMode = 'WALKING';
+                ugsRefreshMode = 'AUTO';
+                ugsStatus = 'IN_TRANSIT';
+                if (!sessionId) {
+                    createSession(function () {
+                        updateLocation(refreshEta)
+                    });
+                }
+                else {
+                    updateLocation(refreshEta);
+                }
+            });
+
+            $('#manual-entry-button').click(function () {
+                $('#monitor-panel').hide();
+                $('#destination-teaser').hide();
+                $('#time-list').show();
+                $('#depart-car-button').removeClass('active');
+                $('#depart-walking-button').removeClass('active');
+                $('#manual-entry-button').addClass('active');
+            });
+
+            $('#update-location-button').click(function(){
+                updateLocation(refreshEta);
+            });
+            $('#ive-arrived-button').click(function () {
+                markSelfAsArrived();
+            })
+            $('#dashboard-update-button').click(function () {
+                angular.element($('#timing-dashboard')).scope().etaUpdate();
+            });
+
+            $('.modal').on('shown.bs.modal', function () {
+                $(this).find('input:text:visible:first').focus();
+                });
+            $('#name-submit-button').click(function(){
+                //Get the name and try to update it.
+                var data = {'name': $('#name-form').find('input[name="name"]').val()};
+                $.cookie('name', data['name']);
+
+                updateOnServer('/api/user', currentUserId, data, function () {
+
+                    $('#name-modal').modal('hide');
+
+                    //Execute the specified callback.
+                    if (nextAfterName) {
+                        nextAfterName();
+                    }
+                });
+
+            });
+
+            $('#add-others-button').click(function () {
+                $('#multi-name-modal').modal();
+            });
+
+            $('#multi-name-submit-button').click(function () {
+                // Grab the value from form
+                var names = $('#multi-name-form').find('input[name="names"]').val();
+                // Call addUserList
+                addUserList(names);
+                //Close modal.
+                $('#multi-name-modal').modal('hide');
+            });
+
+            $('#add-self-button').click(function () {
+                showDestStuff();
+                refreshEta();
+            });
+
+            $('#add-me-link').click(function (event) {
+                event.preventDefault();
+                showDestStuff();
+                refreshEta();
+            });
+
+            $('#curr-loc-selector').click(function (event) {
+                event.preventDefault();
+                updateLocation(selectCurrLoc);
+            });
+
+            $('#select-requester-button').click(function () {
+
+                $('#select-mode-modal').modal('hide');
+                userMode = 'REQUESTER';
+                //initialize();
+                enableDestinationPanel();
+            });
+
+            $('#select-sharer-button').click(function () {
+
+                $('#select-mode-modal').modal('hide');
+                userMode = 'SHARER';
+                //initialize();
+                showDestStuff();
+                // HACK for debug purposes: enable destination panel if on desktop.
+                //enableDestinationPanel();
+            });
+
+            $('#get-started-button').click(function () {
+                $('#select-mode-modal').modal('hide');
+            })
+
+            $('#open-dest-link').click(function (event) {
+                event.preventDefault();
+                showDestinationPanel();
+            });
+
+        }
+        $(initListeners);
+
+        // Select starting tab
+        $(function () {
+
+            if (shareCode) {
+                initialize();
+            }
+            else {
+                if (WURFL.is_mobile) {
+                    initialize();
+                }
+                else {
+                    // You are the requester because we don't support sharing ETAs on desktop.
+                    userMode = 'REQUESTER';
+                    initialize();
+                    enableDestinationPanel();
+
+                }
+            }
+
+            // Fire intro modal if needed
+            if (!$.cookie('name') || (WURFL.is_mobile && !shareCode)) {
+
+                // Set up look of panel
+                // Determine whether to show intro copy.
+                if ($.cookie('name')) {
+                    $('#intro-panel').hide();
+                }
+
+                // Determine which buttons to show
+                if (WURFL.is_mobile && !shareCode) {
+                    // Show request/share mode selector.
+                    // Shown by default.
+                }
+                else {
+                    // Show the "Sounds Great" button
+                    $('#mobile-mode-panel').hide();
+                    $('#intro-only-panel').show();
+                }
+
+                $('#select-mode-modal').modal();
+            }
+        });
+
+        function getEtasForSession(id,cb){
+            $.get('/api/user_group_session?q=' + JSON.stringify({'filters': [{
+                'name': 'groupsession_id',
+                'op': 'eq',
+                'val': id}]}), cb);
+        }
+
+        function refreshEta(){
+
+//            if (ugsRefreshMode == 'AUTO') {
+//                $('#depart-car-button').prop('disabled', 'true');
+//                $('#depart-walking-button').prop('disabled', 'true');
+//            }
+
+            //Confirm that the user has provided his/her name.
+            if (!$.cookie('name')) {
+
+                //If not, pop the name dialog and try again.
+                nextAfterName = refreshEta;
+                $('#name-modal').modal();
+
+                return;
+
+            }
+
+            enableDestinationPanel();
+
+                //Create user_groupsession link
+                    //Set current lat long
+                    //response will contain last update time (now) and eta at that time
+                var ugs = {};
+                ugs['groupsession_id'] = sessionId;
+                ugs['last_lat'] = current_lat;
+                ugs['last_long'] = current_long;
+            if (ugsTransitMode) {
+                ugs['transit_mode'] = ugsTransitMode;
+            }
+            if (ugsRefreshMode) {
+                ugs['eta_mode'] = ugsRefreshMode;
+            }
+            if (ugsStatus) {
+                ugs['status'] = ugsStatus;
+            }
+            var userTime = angular.element($('#my-eta-select')).scope().userTime;
+            if (userTime) {
+                ugs['last_manual_eta'] = userTime;
+            }
+                //Included for future use as an auth key
+                //ugs['share_code'] = shareCode;
+            var openSharePanel = false;
+            if (!ugsId) {
+                // We're creating this for the first time. When we're done, open
+                // the share panel.
+                openSharePanel = true;
+
+            }
+                updateOnServer('/api/user_group_session',ugsId,ugs,function(respData){
+                    //Hide the kickoff window. Switch to show your own ETA.
+                    userMode = 'SHARER';
+                    ugsId = respData['id'];
+                    setSelfArrivalTimeFromUgsList([respData]);
+
+                    if (ugsRefreshMode == 'AUTO') {
+                        enableDestStuff();
+                        $('#join-panel').hide();
+                        if (destinationSet) {
+                            $('#monitor-panel').show();
+                            $('#destination-teaser').hide();
+                        }
+                        else {
+                            $('#destination-teaser').show();
+                        }
+                        if (respData['status'] == 'ARRIVED' || respData['status'] == 'ARRIVED_PRESUMED' || respData['status'] == 'CANCELED') {
+                            $('#ive-arrived-button').hide();
+                            $('#update-location-button').hide();
+                        }
+                    }
+
+                    //Get full list of ETA's
+                    //Show dashboard
+                    //getEtasForSession(sessionId);
+                    angular.element($('#timing-dashboard')).scope().etaUpdate();
+
+                    if (openSharePanel) {
+                        if (WURFL.is_mobile) {
+                            //window.location = 'sms:&body=TestMessage';
+                        }
+                        // Enable post-UGS creation options here.
+                        // Will need to be enabled if UGS already exists on load as well.
+                    }
+                })
+        }
+
+        function onPlaceChanged() {
+            updateTimes();
+            createSession(function () {
+
+                if (ugsId) {
+                    refreshEta();
+                }
+                else {
+                    angular.element($('#timing-dashboard')).scope().etaUpdate();
+                }
+            });
+        }
+
+        function createSession(cb, locOverride) {
+
+            //Confirm that the user has provided his/her name.
+            if (!$.cookie('name')) {
+
+                //If not, pop the name dialog and try again.
+                nextAfterName = function () {
+                    createSession(cb, locOverride);
+                };
+                $('#name-modal').modal();
+
+                return;
+
+            }
+
+            // Post a new active session with the current destination, if selected.
+            var place = autocomplete.getPlace();
+            if (locOverride) {
+                place = locOverride;
+            }
+            var newSession = {};
+            if (place) {
+                newSession['dest_place_id'] = place.place_id;
+                newSession['dest_name'] = place.name;
+                newSession['dest_address'] = place.formatted_address;
+                newSession['dest_lat'] = place.geometry.location.lat();
+                newSession['dest_long'] = place.geometry.location.lng();
+
+                // Hide the autocomplete input
+
+                $('#pac-input').hide();
+                $('#use-your-location').hide();
+            }
+
+            updateOnServer('/api/group_session', sessionId, newSession, function (respData) {
+                //Set window location to include new session key
+                window.location = '#' + respData['code'];
+                showShareOptions(respData);
+                enableDashboard();
+                //Hacked for a couple of special cases. Should be fixed.
+                if (cb && typeof(cb) === 'function'){
+                    cb();
+                }
+            });
+
+        }
+
+        function showShareOptions(respData) {
+            //respData: response from server to group_session create
+            // Hide invite button
+            // Show link
+            // Show buttons for copying to clipboard and opening text message
+            sessionId = respData['id'];
+            sessionOwnerName = respData.user.name;
+            $('#started-by-txt').text('started by ' + sessionOwnerName);
+            shareCode = respData['code'];
+            shareUrl = window.location.protocol + '//' + window.location.hostname + '/#' + respData['code'];
+            var gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1&su=View%20and%20Share%20Our%20ETAs%20with%20Orloj&body=%0A%0A' + encodeURIComponent(shareUrl) + '%0A';
+            $('#share-url').text(shareUrl);
+            $('#share-url').attr('href',shareUrl);
+            $('#gmail-url').attr('href', gmailUrl);
+            $('#invite-button').hide();
+
+            $('#sharing-panel').fadeIn(900);
+
+            if (WURFL.is_mobile && userMode != 'SHARER') {
+                //Delay switching to the dashboard so there's time to read the page on mobile.
+                //This experience should be improved. Also, should probably be based on dimensions.
+                setTimeout(showDashboard, 4000);
+            }
+
+            shareBubble.show();
+
+
+            return;
+        }
+
+    </script>
+  </head>
+  <body>
+
+  <!-- Name modal starts here -->
+  <div id="name-modal" class="modal fade">
+      <div class="modal-dialog" style="max-width: 400px">
+    <div class="modal-content">
+      <div class="modal-header">
+
+          <h4 class="modal-title">What is your name?</h4>
+      </div>
+      <div class="modal-body">
+          <h6><i>We'll remember it in the future.</i></h6>
+        <form id="name-form">
+            <input type="text" name="name"/>
+        </form>
+      </div>
+      <div class="modal-footer">
+          <button id="name-submit-button" type="button" class="btn btn-primary">Submit</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+  <div id="select-mode-modal" class="modal fade" data-backdrop="static">
+      <div class="modal-dialog" style="max-width: 400px">
+          <div class="modal-content" style="text-align: center">
+              <div class="modal-header" style="text-align: center">
+
+                  <!--<h4 class="modal-title">What do you want to do?</h4>-->
+                  <div style="margin: auto"><span class="logo">Orloj</span><span
+                          style="margin-left: 20px; font-style: italic; color: black">Keep them from wondering.</span>
+                  </div>
+
+              </div>
+              <div class="modal-body">
+                  <h4>Orloj helps people meet up efficiently.</h4>
+
+                  <div id="intro-panel">
+                      <ul style="text-align: left; width: 250px; margin: auto">
+                          <li>Auto-updated arrival times</li>
+                          <li>Super-simple group sharing</li>
+                          <li>Virtually zero battery impact</li>
+                          <li>All from the browser</li>
+                          <li>No app install required</li>
+                      </ul>
+                      <div style=" text-align: center">
+                          <h6 style="margin: auto; margin-top: 15px; width: 225px;">Orloj uses location services for
+                              periodic ETA updates only.</h6>
+                      </div>
+                  </div>
+                  <div id="mobile-mode-panel">
+                      <hr width="70%">
+                      <h4>What do you want to do?</h4>
+                      <button id="select-requester-button" type="button" class="btn btn-primary">Request an ETA</button>
+                      <button id="select-sharer-button" type="button" class="btn btn-primary">Share an ETA</button>
+                      <h5><i>Doing both? Choose 'Request'.</i></h5>
+                  </div>
+                  <div id="intro-only-panel" hidden="true">
+                      <hr width="70%">
+                      <button id="get-started-button" type="button" class="btn btn-primary">Sounds Great!</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- Multi-name modal starts here -->
+  <div id="multi-name-modal" class="modal fade">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+
+                  <h4 class="modal-title">Who else should we add?</h4>
+              </div>
+              <div class="modal-body">
+                  <h6><i>Enter one or more names separated by commas.</i></h6>
+
+                  <form id="multi-name-form">
+                      <input type="text" name="names"/>
+                  </form>
+              </div>
+              <div class="modal-footer">
+                  <button id="multi-name-submit-button" type="button" class="btn btn-primary">Add</button>
+              </div>
+          </div>
+          <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
+
+  <!-- Name modal ends here -->
+  <div class="container-fluid" style="max-width: 1200px; margin: auto">
+      <div class="navbar-fixed-top"
+           style="max-width: 1200px; margin: auto; border-bottom: thin solid #000000; background-color: #fff; z-index: 1000;">
+          <div><a href="/" style="text-decoration: none"><span class="logo">Orloj</span><span id="tagline-text"
+                                                                                              style="margin-left: 20px; font-style: italic; color: black">Keep them from wondering.</span></a>
+      </div>
+          <div style="text-align: right; position: relative;">
+              <span id="started-by-txt" class="startedby"></span>
+          </div>
+  </div>
+      <ul class="nav nav-tabs row hidden-md hidden-lg orloj-tabs">
+          <li style="display: none" class="active"><a id="planning-tab-picker" href="#planning-tab"
+                                                      aria-controls="planning-tab"
+                                       data-toggle="tab">Destination</a></li>
+          <li style="display: none"><a id="dashboard-tab-picker" href="#timing-dashboard-wrapper"
+                                       aria-controls="timing-dashboard-wrapper"
+                                       data-toggle="tab">Status</a></li>
+          <li style="display: none"><a id="deststuff-tab-picker" href="#dest-stuff" aria-controls="dest-stuff"
+                                                                 data-toggle="tab">Me</a></li>
+      </ul>
+      <div class="hidden-xs hidden-sm" style="height: 30px">
+          <!-- Margin below navbar on desktop. -->
+      </div>
+      <div class="tab-content">
+          <div id="planning-tab" class="tab-pane fade in active no-fade-desktop">
+          <div class="col-md-6" style="margin-top: 40px; text-align: center;">
+              <h4 id="banner-headline" style="text-align: center;">Orloj helps people meet up efficiently.</h4>
+
+              <div style="max-width: 90%; margin: auto">
+                  <input id="pac-input" class="form-control" type="text"
+                         placeholder="Enter a destination">
+              </div>
+              <div>
+                  <h4 id="use-your-location">Or <a id="curr-loc-selector" href="#">use your current location</a></h4>
+              </div>
+              <p>
+                  <!--<button id="invite-button" class="btn btn-default" style="margin-top: 20px;" type="submit">Invite-->
+                  <!--others!-->
+                  <!--</button>-->
+              </p>
+          </div>
+          <div class="col-md-6">
+              <div id="map-canvas"></div>
+              <h5 ng-controller="MobileOnlyTextCtrl" ng-show="!isMobile"
+                  style="max-width: 400px; margin: auto; padding-top: 60px; text-align: center">Orloj for Desktop only
+                  allows you to view and request ETAs. To share your ETA, please visit <b>orloj.us</b> on a mobile
+                  device.</h5>
+          </div>
+      </div>
+
+          <!-- New dashboard for friend updates goes here -->
+          <div id="timing-dashboard-wrapper" class="tab-pane fade orloj-tile no-fade-desktop">
+              <div id="timing-dashboard" ng-controller="EtaListCtrl" class="col-md-6 dashboard-desktop" hidden="true">
+                  <div style="width: 28px; display: inline-block"></div>
+                  <h4 style="width: 195px; display: inline-block; text-align: center;">Timing Dashboard</h4>
+
+                  <div style="width: 28px; display: inline-block;">
+                      <button id="dashboard-update-button" class="glyphicon glyphicon-refresh" aria-hidden="true"
+                              style="display: inline-block"></button>
+                  </div>
+                  <!--<p id="select-or-add-text">Select or <a id="add-me-link" href="#">add</a> yourself.</p>-->
+                  <div ng-show="!userUpdates.length"><h4 style="padding-top: 40px;">Nobody is sharing an ETA yet.</h4>
+                  </div>
+                  <div class="row">
+                  <!--<button id="add-others-button" class="btn btn-default" type="submit">Add Others</button>-->
+                      <button id="add-self-button" class="btn btn-default" ng-show="isMobile" type="submit">Share My ETA
+                      </button>
+                  </div>
+
+
+                  <div id="list-of-session-users">
+                      <uib-accordion>
+                          <uib-accordion-group is-open="ugs.openInDashboard" ng-click="setOpenUser($index)"
+                                               ng-repeat="ugs in userUpdates track by ugs.user_id">
+                              <uib-accordion-heading style="text-decoration: none">
+
+                                  <div style="text-decoration: none">
+                                      <h4 style="color: black; text-decoration: none">
+                                          <i class="pull-left glyphicon"
+                                             ng-class="{'glyphicon-chevron-down': $index == panelOpen, 'glyphicon-chevron-right': !($index == panelOpen)}"></i>
+                                          <span class="session-list-name" style="margin-left: 8px">{{ (ugs.user.name ? ugs.user.name : ('User ' + ugs.user_id))}}</span>
+                          <span class="session-list-name">{{ (ugs.is_current_user ? '(me)' : '')}}</span>
+                          <span class="session-list-time">{{ ugs.arrival_time }} </span>
+                                      </h4>
+                          </div>
+
+                              </uib-accordion-heading>
+
+                              <p ng-show="ugs.last_eta_updated">Last ETA update: {{ugs.last_eta_updated}}</p>
+
+                              <p ng-show="true">Mode of transportation: {{ugs.transit_mode}}</p>
+
+                              <p ng-show="ugs.dist_from_dest">Last known distance to destination:
+                                  {{ugs.dist_from_dest.toFixed(1)}} miles</p>
+                          </uib-accordion-group>
+                      </uib-accordion>
+                  </div>
+
+
+              </div>
+          </div>
+          <div id="dest-stuff" class="tab-pane fade orloj-tile col-md-6 col-md-offset-6 no-fade-desktop mode-selector">
+              <div id="join-panel" hidden="true">
+                  <div style="max-width: 350px; margin:auto;">
+                  <h4>Select a transport method to begin sharing your ETA!</h4>
+                  </div>
+                  <!--<p id="car-eta-string"></p>-->
+                  <p>
+                      <button id="depart-car-button" class="btn btn-lg btn-default" style="height: 115px">
+                          <i class="fa fa-car fa-2x"></i>
+
+                          <p style="font-size:14px; padding-top: 5px">En Route<br>By Car</p></button>
+
+                      <!--<p id="walking-eta-string"></p>-->
+                      <button id="depart-walking-button" type="button" class="btn btn-lg btn-default"
+                              style="height: 115px">
+                          <i class="fa fa-rocket fa-2x"></i>
+
+                          <p style="font-size:14px; padding-top: 5px">En Route<br>On Foot</p></button>
+                      <button id="manual-entry-button" type="button" class="btn btn-lg btn-default"
+                              style="height: 115px">
+                          <i class="fa fa-clock-o fa-2x"></i>
+
+                          <p style="font-size:14px; padding-top: 5px">Set Your<br>Own</p></button>
+                  </p>
+                  <h5 style="margin-bottom: 20px">Public transit and bicycle ETA's coming soon!</h5>
+
+                  <div id="time-list" ng-controller="TimeListCtrl" hidden="true">
+                      <p>Specify your expected arrival time:</p>
+                      <select id="my-eta-select" ng-model="userTime" ng-mousedown="setEtaDefault()"
+                              ng-change="timeChange()" class="form-control"
+                              style="width: auto; margin: auto;">
+                          <option value="" disabled selected>Select a Time</option>
+                          <option ng-repeat="t in times" value="{{t.value}}">{{t.text}}</option>
+                      </select>
+                  </div>
+                  <p id="destination-teaser" hidden="true">To see your ETA, you or a friend needs to <a
+                          id="open-dest-link" href="#">set your
+                      destination.</a></p>
+
+                  <div id="monitor-panel" hidden="true">
+                      <p>My estimated arrival time:</p>
+
+                      <p id="arrival-time-me"></p>
+                      <button id="update-location-button" class="btn btn-default" type="submit">Update Location</button>
+                      <button id="ive-arrived-button" class="btn btn-default" type="submit">I've Arrived</button>
+                  </div>
+            </div>
+
+          </div>
+          <div class="tab-pane fade orloj-tile col-md-6 col-md-offset-6 no-fade-desktop hidden-sm hidden-xs"
+               style="text-align: center">
+
+          </div>
+      </div>
+      <div id="sharing-panel" hidden="true" style="text-align: center" class="collapse">
+          <div class="navbar navbar-default navbar-fixed-bottom hidden-xs">
+
+              <div style="text-align: center; margin: auto; padding-top: 15px;" class="hidden-xs hidden-sm"><p>Others
+                  can share or view ETAs by visiting <a id="share-url" href=""></a>. Send the link via <a id="gmail-url"
+                                                                                                          href=""
+                                                                                                          target="_blank">GMail</a>.
+              </p></div>
+          <!--<button id="copy-url-button" class="btn btn-default" type="submit">Copy URL to Clipboard</button>-->
+      </div>
+      </div>
+  </div>
+  </body>
+{% endraw %}
+</html>
+

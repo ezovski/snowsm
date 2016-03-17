@@ -1,0 +1,20 @@
+{
+  "name": "orloj",
+  "version": "0.0.0",
+  "homepage": "https://github.com/ezovski/orloj",
+  "authors": [
+    "Matt Ezovski"
+  ],
+  "license": "None",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "add-to-homescreen": "git://github.com/ezovski/add-to-homescreen.git#67628c8"
+  }
+}
