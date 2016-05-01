@@ -118,10 +118,10 @@ def run():
     app.run()
 
 @script_manager.command
-def build_db():
+def build_db(geoId):
 
     import process_trails
-    process_trails.build_db()
+    process_trails.build_db(geoId)
 
 @script_manager.command
 def update_ski_areas():

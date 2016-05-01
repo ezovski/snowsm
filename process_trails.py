@@ -9,15 +9,30 @@ import overpass
 from server.dao.trail import Trail
 from server.dao.skiarea import SkiArea
 
+PACIFIC_BB = '26.6670958011,-169.27734375,71.6636629314,-114.78515625'
+ROCKIES_BB = '26.6670958011,-114.9609375,71.6636629314,-98.26171875'
+CENTRAL_BB = '26.6670958011,-98.4375,71.6636629314,-74.53125'
+EAST_BB = '26.6670958011,-74.53125,71.6636629314,-50.9765625'
+
+BB_LIST = [
+    PACIFIC_BB,
+    ROCKIES_BB,
+    CENTRAL_BB,
+    EAST_BB
+]
+
 def build_query(query, bb):
 
     return query + bb + ');'
 
-def build_db():
+def build_db(geoId):
     api = overpass.API(timeout=10000)
 
     # New Hampshire and some surrounding areas
     BOUNDING_BOX = '43.12103377575541,-73.7237548828125,44.797428998555674,-69.378662109375'
+
+    if geoId:
+        BOUNDING_BOX = BB_LIST[int(geoId)]
 
     # Core of White Mountains
     #BOUNDING_BOX = '44.00269350325321,-71.64871215820312,44.36067856998804,-71.12411499023438'
