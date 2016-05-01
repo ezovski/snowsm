@@ -78,7 +78,7 @@ queues.q.enqueue(function, param1, param2)
 
 ## Heroku Notes
 
-Orloj is dependent on pip, npm, and bower for its installs. To support this, both the Node.js and Python buildpacks are needed.
+snowsm is dependent on pip, npm, and bower for its installs. To support this, both the Node.js and Python buildpacks are needed.
 
 ```
 heroku buildpacks:set https://github.com/heroku/heroku-buildpack-python

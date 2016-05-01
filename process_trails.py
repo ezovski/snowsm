@@ -44,7 +44,7 @@ def build_db():
 
         exists = SkiArea.query.filter_by(osm_id=sa['id'])
         if exists.count():
-            #Eventually we should do updates here
+            #TODO: Allow ski area updates to process
             continue
 
         sam = SkiArea()
@@ -65,16 +65,22 @@ def build_db():
             continue
         exists = Trail.query.filter_by(osm_id=trail['id'])
         if exists.count():
-            #Eventually we should do updates here
-            continue
+            t = exists[0]
+        else:
+            t= Trail()
 
-        t = Trail()
         t.name = trail['properties'].get('name')
         t.difficulty = trail['properties'].get('piste:difficulty').lower() if 'piste:difficulty' in trail['properties'] else None
         t.osm_id = trail['id']
         t.path = str(geometry.LineString(trail['geometry']['coordinates']))
-        db.session.add(t)
+
+        if not exists.count():
+            db.session.add(t)
         db.session.commit()
+
+        if not exists.count():
+            # Remaining steps only apply to new trails
+            continue
 
         # Determine which ski area this trail is a part of.
         # results = db.session.query(SkiArea).filter(SkiArea.boundary.ST_Contains(geoalchemy2.WKBElement(geometry.LineString(trail['geometry']['coordinates']))))
@@ -121,7 +127,7 @@ def build_db():
 
         exists = Lift.query.filter_by(osm_id=lift['id'])
         if exists.count():
-            #Eventually we should do updates here
+            #TODO: Allow lift updates to process
             continue
 
         lt = Lift()
