@@ -6,6 +6,35 @@ import us
 
 __author__ = 'mattezovski'
 
+prov_terr = {
+    'AB': 'Alberta',
+    'BC': 'British Columbia',
+    'MB': 'Manitoba',
+    'NB': 'New Brunswick',
+    'NL': 'Newfoundland and Labrador',
+    'NT': 'Northwest Territories',
+    'NS': 'Nova Scotia',
+    'NU': 'Nunavut',
+    'ON': 'Ontario',
+    'PE': 'Prince Edward Island',
+    'QC': 'Quebec',
+    'SK': 'Saskatchewan',
+    'YT': 'Yukon',
+    'Alberta': 'AB',
+    'British Columbia': 'BC',
+    'Manitoba': 'MB',
+    'New Brunswick': 'NB',
+    'Newfoundland and Labrador': 'NL',
+    'Northwest Territories': 'NT',
+    'Nova Scotia': 'NS',
+    'Nunavut': 'NU',
+    'Ontario': 'ON',
+    'Prince Edward Island': 'PE',
+    'Quebec': 'QC',
+    'Saskatchewan': 'SK',
+    'Yukon': 'YT'
+}
+
 def update():
 
     sa_list = SkiArea.query.all()
@@ -34,6 +63,12 @@ def update():
             resp = json.loads(resp.text)
             if 'address' in resp and 'state' in resp['address']:
 
-                sa.state_abbr = us.states.lookup(resp['address']['state']).abbr
+                #sa.state_abbr = us.states.lookup(resp['address']['state']).abbr
+                state = us.states.lookup(resp['address']['state'])
+                if state:
+                    sa.state_abbr = state.abbr
+                else:
+                    # Assume Canada for now
+                    sa.state_abbr = prov_terr[resp['address']['state']]
 
     db.session.commit()
