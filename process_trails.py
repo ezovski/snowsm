@@ -1,5 +1,6 @@
 from server.dao.lift import Lift
 from database import db
+import update_ski_areas
 __author__ = 'mattezovski'
 
 from shapely import geometry
@@ -212,6 +213,9 @@ def build_db(geoId):
 
         num_unaffiliated_trails = trails.count()
 
+    # Associates ski areas with states
+    # TODO: Rename all of this.
+    update_ski_areas.update()
 
     print 'done'
 

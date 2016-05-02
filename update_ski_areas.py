@@ -3,6 +3,7 @@ from database import db
 import requests
 from server.dao.skiarea import SkiArea
 import us
+from unidecode import unidecode
 
 __author__ = 'mattezovski'
 
@@ -69,6 +70,7 @@ def update():
                     sa.state_abbr = state.abbr
                 else:
                     # Assume Canada for now
-                    sa.state_abbr = prov_terr[resp['address']['state']]
+                    if unidecode(resp['address']['state']) in prov_terr:
+                        sa.state_abbr = prov_terr[unidecode(resp['address']['state'])]
 
     db.session.commit()
