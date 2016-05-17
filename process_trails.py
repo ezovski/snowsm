@@ -38,6 +38,9 @@ def build_db(geoId):
     if geoId:
        BOUNDING_BOX = BB_LIST[int(geoId)]
 
+    # Snowbird/Alta ... Let's see.
+    # BOUNDING_BOX = '40.5, -111.74, 40.601, -11.58'
+
     # Core of White Mountains
     #BOUNDING_BOX = '44.00269350325321,-71.64871215820312,44.36067856998804,-71.12411499023438'
 
@@ -230,6 +233,10 @@ def find_nearest_ski_area(entity, api=None):
         sam.name = sa['properties'].get('name')
         if not sam.name:
             return None
+        # Double-check to make sure this id doesn't already exist. HACK!
+        does_it_exist = SkiArea.query.filter_by(osm_id=sa['id'])
+        if does_it_exist.count():
+            return does_it_exist[0].id
         sam.osm_id = sa['id']
         sam.boundary = str(geometry.Point(sa['geometry']['coordinates']).buffer(0.020))
         #sam.boundary = str(geometry.Point(sa['geometry']['coordinates']))
