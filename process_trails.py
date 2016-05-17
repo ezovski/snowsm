@@ -156,12 +156,14 @@ def build_db(geoId):
 
     # Clean up results.
 
-    # Cycle through unaffiliated lifts. Attempt to affiliate.
-    # Continue to cycle until all lifts have affiliated or iterating isn't helping.
+    # Cycle through unaffiliated lifts and trails. Attempt to affiliate.
+    # Continue to cycle until all lifts trails have affiliated or iterating isn't helping.
     lifts = Lift.query.filter_by(ski_area_id = None)
     num_unaffiliated_lifts = lifts.count()
+    trails = Trail.query.filter_by(ski_area_id = None)
+    num_unaffiliated_trails = trails.count()
 
-    while num_unaffiliated_lifts > 0:
+    while num_unaffiliated_lifts > 0 and num_unaffiliated_trails > 0:
         print(num_unaffiliated_lifts)
 
         for lt in lifts:
@@ -171,22 +173,6 @@ def build_db(geoId):
                 lt.ski_area_id = result
                 db.session.commit()
 
-        lifts = Lift.query.filter_by(ski_area_id = None)
-        if lifts.count() == num_unaffiliated_lifts:
-            break
-
-        num_unaffiliated_lifts = lifts.count()
-
-    # Cycle through unaffiliated trails. Attempt to affiliate.
-    # Continue to cycle until all trails have affiliated or iterating isn't helping.
-
-    trails = Trail.query.filter_by(ski_area_id = None)
-    num_unaffiliated_trails = trails.count()
-
-    while num_unaffiliated_trails > 0:
-
-        print(num_unaffiliated_trails)
-
         for t in trails:
 
             result = find_nearest_ski_area(t)
@@ -194,10 +180,12 @@ def build_db(geoId):
                 t.ski_area_id = result
                 db.session.commit()
 
+        lifts = Lift.query.filter_by(ski_area_id = None)
         trails = Trail.query.filter_by(ski_area_id = None)
-        if trails.count() == num_unaffiliated_trails:
+        if lifts.count() == num_unaffiliated_lifts and trails.count() == num_unaffiliated_trails:
             break
 
+        num_unaffiliated_lifts = lifts.count()
         num_unaffiliated_trails = trails.count()
 
     # Associates ski areas with states
