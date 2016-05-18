@@ -42,7 +42,7 @@ def build_db(geoId):
     # BOUNDING_BOX = '40.5, -111.74, 40.601, -11.58'
 
     # Park City
-    BOUNDING_BOX = '40.5, -111.62, 40.8, -111.244'
+    # BOUNDING_BOX = '40.5, -111.62, 40.8, -111.244'
 
     # Core of White Mountains
     #BOUNDING_BOX = '44.00269350325321,-71.64871215820312,44.36067856998804,-71.12411499023438'
