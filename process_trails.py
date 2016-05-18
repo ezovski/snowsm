@@ -41,6 +41,9 @@ def build_db(geoId):
     # Snowbird/Alta ... Let's see.
     # BOUNDING_BOX = '40.5, -111.74, 40.601, -11.58'
 
+    # Park City
+    BOUNDING_BOX = '40.5, -111.62, 40.8, -111.244'
+
     # Core of White Mountains
     #BOUNDING_BOX = '44.00269350325321,-71.64871215820312,44.36067856998804,-71.12411499023438'
 
@@ -132,18 +135,25 @@ def build_db(geoId):
     for lift in lift_response.features:
 
         exists = Lift.query.filter_by(osm_id=lift['id'])
-        if exists.count():
-            #TODO: Allow lift updates to process
-            continue
+        is_update = exists.count()
 
-        lt = Lift()
+        if not is_update:
+            lt = Lift()
+        else:
+            lt = exists[0]
         lt.name = lift['properties'].get('name')
         lt.type = lift['properties'].get('aerialway')
         lt.osm_id = lift['id']
         lt.path = str(geometry.LineString(lift['geometry']['coordinates']))
+        lt.occupancy = lift['properties'].get('aerialway:occupancy', lift['properties'].get('capacity'))
 
-        db.session.add(lt)
+        if not is_update:
+            db.session.add(lt)
+
         db.session.commit()
+
+        if is_update:
+            continue
 
         results = db.session.query(SkiArea).filter(SkiArea.boundary.ST_Contains(lt.path))
         if results.count() == 1:

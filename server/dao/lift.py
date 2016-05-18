@@ -12,3 +12,4 @@ class Lift(db.Model):
     ski_area_id = db.Column(db.Integer, db.ForeignKey('ski_area.id'))
     type = db.Column(db.Text)
     path = db.Column(Geometry())
+    occupancy = db.Column(db.Integer)
