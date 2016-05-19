@@ -14,6 +14,6 @@ Flask-SSLify==0.1.5
 requests==2.7.0
 overpass
 geoalchemy2
-shapely
+shapely==1.5.9
 us
 unidecode
