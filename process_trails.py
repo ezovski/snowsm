@@ -32,7 +32,7 @@ def build_db(geoId):
     # New Hampshire and some surrounding areas
     BOUNDING_BOX = '43.12103377575541,-73.7237548828125,44.797428998555674,-69.378662109375'
 
-    # Boyne Highlands
+    #  Boyne Highlands
     # BOUNDING_BOX = '45,-85,46,-84'
 
     if geoId:
