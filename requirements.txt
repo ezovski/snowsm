@@ -12,8 +12,8 @@ rq-dashboard==0.3.4
 geopy==1.10.0
 Flask-SSLify==0.1.5
 requests==2.7.0
-overpass
+overpass==0.3.1
 geoalchemy2
-shapely==1.5.9
+shapely==1.5.15
 us
 unidecode
