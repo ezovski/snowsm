@@ -61,7 +61,6 @@ def build_db(geoId):
     print('getting ski areas')
     ski_area_response = api.Get(build_query('way["landuse"~"winter_sports"](', BOUNDING_BOX), 'json')
 
-    print(ski_area_response)
     ski_areas = []
     trails = []
     lifts = []
