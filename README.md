@@ -9,8 +9,8 @@ Install system requirements using homebrew:
 ```
 brew install python
 brew install postgresql
+brew install postgis
 brew install redis
-brew install node
 ```
 
 Make sure you have `pip` and `virtualenv`. Brew should have added them, but who knows.
@@ -32,12 +32,6 @@ Install python dependencies:
 pip install -r requirements.txt
 ```
 
-Install node dependencies (currently just installs bower and downloads UI dependencies):
-
-```
-npm install
-```
-
 Initialize the database:
 
 ```
@@ -45,7 +39,7 @@ Initialize the database:
 # Specify an empty password when prompted.
 ```
 
-Perform the initial db migration:
+Perform the initial db migration (you may have to do it in steps... not sure why):
 
 ```
 python web.py db upgrade
@@ -56,6 +50,10 @@ You should be good to go!
 ## Local operation
 
 Most important commands are run through the `web.py` script. Some of the important ones:
+
+* To run an import of a region from OpenStreetMap: `python web.py build_db [region_number]`
+
+..* The regions are specified near the top of `process_trails.py`.
 
 * To start the web server on port 5000: `python web.py run`
 
@@ -82,7 +80,7 @@ snowsm is dependent on pip, npm, and bower for its installs. To support this, bo
 
 ```
 heroku buildpacks:set https://github.com/heroku/heroku-buildpack-python
-heroku buildpacks:add --index 1 https://github.com/heroku/heroku-buildpack-nodejs
+heroku buildpacks:add --index 1 https://github.com/cyberdelia/heroku-geo-buildpack
 ```
 
 Also, the `IS_HEROKU` environment configuration variable must be set.
