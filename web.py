@@ -105,7 +105,8 @@ def auth_func_user(**kw):
 def init_api():
 
     api_manager.create_api(Trail, methods=['GET'], exclude_columns=['path', 'ski_area.boundary'], results_per_page=100, collection_name='trails')
-    api_manager.create_api(SkiArea, methods=['GET'], exclude_columns=['boundary', 'trails.path'], results_per_page=100, collection_name='ski_areas')
+    api_manager.create_api(Lift, methods=['GET'], exclude_columns=['path', 'ski_area.boundary'], results_per_page=100, collection_name='lifts')
+    api_manager.create_api(SkiArea, methods=['GET'], exclude_columns=['boundary', 'trails.path', 'lifts.path'], results_per_page=100, collection_name='ski_areas')
     api_manager.create_api(State, methods=['GET'], exclude_columns=['ski_areas.boundary'], results_per_page=100, collection_name='states')
     pass
 
