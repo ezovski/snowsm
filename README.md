@@ -53,7 +53,7 @@ Most important commands are run through the `web.py` script. Some of the importa
 
 * To run an import of a region from OpenStreetMap: `python web.py build_db [region_number]`
 
-..* The regions are specified near the top of `process_trails.py`.
+  * The regions are specified near the top of `process_trails.py`.
 
 * To start the web server on port 5000: `python web.py run`
 
