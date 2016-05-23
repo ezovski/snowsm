@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>SnowSM</title>
+    {% for ski_area in ski_areas %}
+        <p><a href="/ski_areas/{{ ski_area.id }}">{{ ski_area.name }}</a></p>
+    {% endfor %}
+
+</head>
+<body>
+
+</body>
+</html>

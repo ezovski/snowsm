@@ -53,14 +53,38 @@ def load_user(userid):
     return User.query.get(userid)
 
 
-# Step 7: create endpoints for the application, one for index and one for login
 @app.route('/', methods=['GET'])
-@login_required
 def index():
-    resp = make_response(render_template('index.html'))
-    resp.set_cookie('name', current_user.name if current_user.name else '')
+    return show_states()
 
-    return resp
+@app.route('/states', methods=['GET'])
+def show_states():
+
+    return render_template('states.html', states=State.query.order_by(State.name).all())
+
+@app.route('/states/<state_abbr>', methods=['GET'])
+def show_state(state_abbr):
+
+    return render_template('state.html', ski_areas=SkiArea.query.order_by(SkiArea.name).filter_by(state_abbr=state_abbr))
+
+@app.route('/ski_areas/<int:ski_area_id>', methods=['GET'])
+def show_ski_area(ski_area_id):
+    sa = SkiArea.query.get(ski_area_id)
+
+    grouped_trails = {}
+    for trail in sa.trails:
+        if not trail.difficulty:
+            trail.difficulty = 'None'
+        if trail.difficulty not in grouped_trails:
+            grouped_trails[trail.difficulty] = []
+
+        grouped_trails[trail.difficulty].append(trail)
+
+    for difficulty_level in grouped_trails:
+        grouped_trails[difficulty_level].sort(key=lambda x: x.name)
+
+    return render_template('ski_area.html', ski_area=sa,
+                           grouped_trails=grouped_trails)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

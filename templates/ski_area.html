@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>SnowSM</title>
+    {% for difficulty_level in grouped_trails %}
+        <p><b>{{ difficulty_level }}</b></p>
+        {% for trail in grouped_trails[difficulty_level] %}
+            <p>{{ trail.name }}</p>
+        {% endfor %}
+    {% endfor %}
+
+</head>
+<body>
+
+</body>
+</html>
